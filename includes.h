@@ -120,6 +120,7 @@
 /*# include <floss.h(floss_utimes)>*/ /* scp.c, sftp-server.c */
 # define MISSING_NFDBITS 1 /* not detected by configure */
 # define MISSING_FD_MASK 1 /* not detected by configure */
+typedef long fd_mask; /* Not supplied anymore */
 # define __timespec_DEFINED /* Hack? */
 #if 0
   extern const void * EVP_sha256(void); /* Hack? Needed by schnorr.c, OpenSSL issue? */
