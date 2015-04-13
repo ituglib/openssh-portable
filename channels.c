@@ -1976,7 +1976,7 @@ channel_post_mux_listener(Channel *c, fd_set *readset, fd_set *writeset)
 		close(newsock);
 		return;
 	}
-	if ((euid != 0) && (getuid() != euid)) {
+	if ((euid != SUPERUSER) && (getuid() != euid)) {
 		error("multiplex uid mismatch: peer euid %u != uid %u",
 		    (u_int)euid, (u_int)getuid());
 		close(newsock);

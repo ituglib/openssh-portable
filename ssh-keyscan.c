@@ -292,7 +292,7 @@ keygrab_ssh2(con *c)
 	 * do the key-exchange until an error occurs or until
 	 * the key_print_wrapper() callback sets c_done.
 	 */
-	ssh_dispatch_run(c->c_ssh, DISPATCH_BLOCK, &c->c_done, c->c_ssh);
+	ssh_dispatch_run(c->c_ssh, DISPATCH_BLOCK, (volatile sig_atomic_t *) &c->c_done, c->c_ssh);
 }
 
 static void
