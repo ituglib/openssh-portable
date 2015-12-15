@@ -715,7 +715,7 @@ privsep_preauth(Authctxt *authctxt)
 		set_log_handler(mm_log_handler, pmonitor);
 
 		/* Demote the child */
-		if (getuid() == 0 || geteuid() == 0)
+		if (getuid() == SUPERUSER || geteuid() == SUPERUSER)
 			privsep_preauth_child();
 		setproctitle("%s", "[net]");
 		if (box != NULL)
@@ -1489,7 +1489,7 @@ main(int ac, char **av)
 	av = saved_argv;
 #endif
 
-	if (geteuid() == 0 && setgroups(0, NULL) == -1)
+	if (geteuid() == SUPERUSER && setgroups(0, NULL) == -1)
 		debug("setgroups(): %.200s", strerror(errno));
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
@@ -1919,7 +1919,7 @@ main(int ac, char **av)
 		    (st.st_uid != getuid () ||
 		    (st.st_mode & (S_IWGRP|S_IWOTH)) != 0))
 #else
-		if (st.st_uid != 0 || (st.st_mode & (S_IWGRP|S_IWOTH)) != 0)
+		if (st.st_uid != SUPERUSER || (st.st_mode & (S_IWGRP|S_IWOTH)) != 0)
 #endif
 			fatal("%s must be owned by root and not group or "
 			    "world-writable.", _PATH_PRIVSEP_CHROOT_DIR);

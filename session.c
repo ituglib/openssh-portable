@@ -1464,7 +1464,7 @@ safely_chroot(const char *path, uid_t uid)
 		if (stat(component, &st) != 0)
 			fatal("%s: stat(\"%s\"): %s", __func__,
 			    component, strerror(errno));
-		if (st.st_uid != 0 || (st.st_mode & 022) != 0)
+		if (st.st_uid != SUPERUSER || (st.st_mode & 022) != 0)
 			fatal("bad ownership or modes for chroot "
 			    "directory %s\"%s\"", 
 			    cp == NULL ? "" : "component ", component);
@@ -2356,7 +2356,7 @@ session_pty_cleanup2(Session *s)
 		record_logout(s->pid, s->tty, s->pw->pw_name);
 
 	/* Release the pseudo-tty. */
-	if (getuid() == 0)
+	if (getuid() == SUPERUSER)
 		pty_release(s->tty);
 
 	/*

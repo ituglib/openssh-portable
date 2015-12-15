@@ -424,7 +424,7 @@ do_authentication(Authctxt *authctxt)
 	 * the server.
 	 */
 #ifndef HAVE_CYGWIN
-	if (!use_privsep && getuid() != 0 && authctxt->pw &&
+	if (!use_privsep && getuid() != SUPERUSER && authctxt->pw &&
 	    authctxt->pw->pw_uid != getuid())
 		packet_disconnect("Cannot change user when server not running as root.");
 #endif
