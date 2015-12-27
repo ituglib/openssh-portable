@@ -1250,7 +1250,9 @@ map_tos(char *s, int *val)
 		{ "af41",		IPTOS_DSCP_AF41 },
 		{ "af42",		IPTOS_DSCP_AF42 },
 		{ "af43",		IPTOS_DSCP_AF43 },
+#if ! defined(__TANDEM)
 		{ "critical",		IPTOS_PREC_CRITIC_ECP },
+#endif
 		{ "cs0",		IPTOS_DSCP_CS0 },
 		{ "cs1",		IPTOS_DSCP_CS1 },
 		{ "cs2",		IPTOS_DSCP_CS2 },
@@ -1260,9 +1262,13 @@ map_tos(char *s, int *val)
 		{ "cs6",		IPTOS_DSCP_CS6 },
 		{ "cs7",		IPTOS_DSCP_CS7 },
 		{ "ef",			IPTOS_DSCP_EF },
+#if ! defined(__TANDEM)
 		{ "inetcontrol",	IPTOS_PREC_INTERNETCONTROL },
+#endif
 		{ "lowdelay",		IPTOS_LOWDELAY },
+#if ! defined(__TANDEM)
 		{ "netcontrol",		IPTOS_PREC_NETCONTROL },
+#endif
 		{ "reliability",	IPTOS_RELIABILITY },
 		{ "throughput",		IPTOS_THROUGHPUT },
 		{ NULL, 		-1 },
