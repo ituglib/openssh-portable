@@ -874,29 +874,41 @@ readwrite(int net_fd)
 
 		/* treat socket error conditions */
 		for (n = 0; n < 4; n++) {
+#if defined (__TANDEM)
+			if (pfd[n].revents & (POLLERR)) {
+#else
 			if (pfd[n].revents & (POLLERR|POLLNVAL)) {
+#endif
 				pfd[n].fd = -1;
 			}
 		}
 		/* reading is possible after HUP */
 		if (pfd[POLL_STDIN].events & POLLIN &&
+#if ! defined (__TANDEM)
 		    pfd[POLL_STDIN].revents & POLLHUP &&
+#endif
 		    ! (pfd[POLL_STDIN].revents & POLLIN))
 				pfd[POLL_STDIN].fd = -1;
 
 		if (pfd[POLL_NETIN].events & POLLIN &&
+#if ! defined (__TANDEM)
 		    pfd[POLL_NETIN].revents & POLLHUP &&
+#endif
 		    ! (pfd[POLL_NETIN].revents & POLLIN))
 				pfd[POLL_NETIN].fd = -1;
 
+#if ! defined (__TANDEM)
 		if (pfd[POLL_NETOUT].revents & POLLHUP) {
 			if (Nflag)
 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
 			pfd[POLL_NETOUT].fd = -1;
 		}
+#endif
+#if ! defined (__TANDEM)
 		/* if HUP, stop watching stdout */
 		if (pfd[POLL_STDOUT].revents & POLLHUP)
 			pfd[POLL_STDOUT].fd = -1;
+#endif
 		/* if no net out, stop watching stdin */
 		if (pfd[POLL_NETOUT].fd == -1)
 			pfd[POLL_STDIN].fd = -1;
