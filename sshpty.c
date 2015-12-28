@@ -215,7 +215,7 @@ pty_setowner(struct passwd *pw, const char *tty)
 	if (st.st_uid != pw->pw_uid || st.st_gid != gid) {
 		if (chown(tty, pw->pw_uid, gid) < 0) {
 			if (errno == EROFS &&
-			    (st.st_uid == pw->pw_uid || st.st_uid == 0))
+			    (st.st_uid == pw->pw_uid || st.st_uid == SUPERUSER))
 				debug("chown(%.100s, %u, %u) failed: %.100s",
 				    tty, (u_int)pw->pw_uid, (u_int)gid,
 				    strerror(errno));

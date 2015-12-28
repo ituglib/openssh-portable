@@ -1542,7 +1542,7 @@ read_config_file(const char *filename, struct passwd *pw, const char *host,
 
 		if (fstat(fileno(f), &sb) == -1)
 			fatal("fstat %s: %s", filename, strerror(errno));
-		if (((sb.st_uid != 0 && sb.st_uid != getuid()) ||
+		if (((sb.st_uid != SUPERUSER && sb.st_uid != getuid()) ||
 		    (sb.st_mode & 022) != 0))
 			fatal("Bad owner or permissions on %s", filename);
 	}
