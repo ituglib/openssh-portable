@@ -113,6 +113,60 @@
 #endif
 
 #include <netinet/in.h>
+#ifdef __TANDEM
+# include <netinet/in6.h>
+/* while we're at it... */
+# include <fcntl.h>
+# include <sys/time.h> /* struct timeval */
+/*# include <floss.h(floss_utimes)>*/ /* scp.c, sftp-server.c */
+# define MISSING_NFDBITS 1 /* not detected by configure */
+# define MISSING_FD_MASK 1 /* not detected by configure */
+typedef long fd_mask; /* Not supplied anymore */
+# define __timespec_DEFINED /* Hack? */
+#if 0
+  extern const void * EVP_sha256(void); /* Hack? Needed by schnorr.c, OpenSSL issue? */
+#endif
+# undef HAVE__RES_EXTERN /* misdetected by configure? */
+# define DISABLE_UTMPX /* might be done via ./configure --enable-utmpx=no ? */
+
+/* SI_WRITE is obsolete, but still used in scp.c, sftp-client.c */
+# define S_IWRITE S_IWUSR
+
+/* atomicio.c, auth2.c, authfd.c, channels.c, clientloop.c , monitor.c, monitor_wrap.c, msg.c, mux.c, openbsd-compat/readpassphrase.c, readpass.c, roaming_common.c, roaming_dummy.c, scp.c, serverloop.c, sftp-client.c, sftp-server.c, ssh-agent.c, ssh-keyscan.c, ssh-pkcs11-client.c, ssh-pkcs11-helper.c, sshconnect.c, sshd.c */
+# include <floss.h(floss_read)>
+/* atomicio.c */
+# include <floss.h(floss_readv)>
+/* authfd.c, authfile.c, channel.c, clientloop.c, log.c, monitor_wrapxp.c, msg.c, mux.c, openbsd-compat/readpassphrase.c, progressmeter.c, roaming_common.c, roaming_dummy.c, scp.c, serverloop.c, sftp-client.c, sftp-server.c, sftp.c, ssh-agent.c, ssh-keyscan.c, ssh-pkcs11-client.c, ssh-pkcs11-helper.c, sshconnect.c, sshd.c */
+# include <floss.h(floss_write)>
+/* sftp-client.c */
+# include <floss.h(floss_writev)>
+/* clientloop.c, openbsd-compat/daemon.c, readpass.c. scp.c, ssh-pkcs11-client.c, ssh.c, sshconnect.c */
+# include <floss.h(floss_fsync)>
+/* sftp-client.c, sftp-server.c */
+# include <floss.h(floss_fork)>
+/* clientloop.c, openbsd-compat/bsd-misc.c, openbsd-compat/bsd-poll.c, serverloop.c, session.c, sftp-server.c, sftp.c, ssh-agent.c, ssh-agent.c, ssh-keyscan.c, ssh-pkcs11-helper.c, sshconnect.c, sshconnect2.c, sshd.c */
+# include <floss.h(floss_getpwuid)>
+/* readpass.c, scp.c, ssh-pkcs11-client.c */
+# include <floss.h(floss_execlp)>
+/* session.c, sftp.c, sshconnect.c, sshconnect2.c */
+# include <floss.h(floss_execl)>
+/* session.c */
+# include <floss.h(floss_execve)>
+/* sftp.c, ssh-agent.c */
+# include <floss.h(floss_execvp)>
+/* sshconnect.c, sshd.c */
+# include <floss.h(floss_execv)>
+/* ssh.c, uidswap.c, sshconnect.c */
+# include <floss.h(floss_seteuid,)>
+/* uidswap.c */
+# include <floss.h(floss_setreuid)>
+/* auth1.c, channels.c, loginrec.c, plattform.c, session.c, sshd.c */
+# define SUPERUSER 65535
+# define NSIG (SIGABEND+1)
+#else
+# define SUPERUSER 0
+#endif /* __TANDEM */
+
 #include <netinet/in_systm.h> /* For typedefs */
 #ifdef HAVE_RPC_TYPES_H
 # include <rpc/types.h> /* For INADDR_LOOPBACK */
