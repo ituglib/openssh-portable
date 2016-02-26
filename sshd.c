@@ -237,7 +237,7 @@ int *startup_pipes = NULL;
 int startup_pipe;		/* in child */
 
 /* variables used for privilege separation */
-int use_privsep = -1;
+int use_privsep = 0;
 struct monitor *pmonitor = NULL;
 int privsep_is_preauth = 1;
 
@@ -670,6 +670,7 @@ privsep_preauth(Authctxt *authctxt)
 	pid = fork();
 	if (pid == -1) {
 		fatal("fork of unprivileged child failed");
+		return 1;
 	} else if (pid != 0) {
 		debug2("Network child is on pid %ld", (long)pid);
 

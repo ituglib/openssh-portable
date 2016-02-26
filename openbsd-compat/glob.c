@@ -172,6 +172,8 @@ static int	 match(Char *, Char *, Char *, int);
 #ifdef DEBUG
 static void	 qprintf(const char *, Char *);
 #endif
+size_t           strnlen(const char *str, size_t maxlen);
+
 
 int
 glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
