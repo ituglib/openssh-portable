@@ -273,7 +273,7 @@ sshpam_chauthtok_ruid(pam_handle_t *pamh, int flags)
 	if (setreuid(sshpam_authctxt->pw->pw_uid, -1) == -1)
 		fatal("%s: setreuid failed: %s", __func__, strerror(errno));
 	result = pam_chauthtok(pamh, flags);
-	if (setreuid(0, -1) == -1)
+	if (setreuid(SUPERUSER, -1) == -1)
 		fatal("%s: setreuid failed: %s", __func__, strerror(errno));
 	return result;
 }
@@ -782,7 +782,7 @@ sshpam_query(void *ctx, char **name, char **info,
 			}
 			if (type == PAM_SUCCESS) {
 				if (!sshpam_authctxt->valid ||
-				    (sshpam_authctxt->pw->pw_uid == 0 &&
+				    (sshpam_authctxt->pw->pw_uid == SUPERUSER &&
 				    options.permit_root_login != PERMIT_YES))
 					fatal("Internal error: PAM auth "
 					    "succeeded when it should have "
@@ -856,7 +856,7 @@ sshpam_respond(void *ctx, u_int num, char **resp)
 	}
 	buffer_init(&buffer);
 	if (sshpam_authctxt->valid &&
-	    (sshpam_authctxt->pw->pw_uid != 0 ||
+	    (sshpam_authctxt->pw->pw_uid != SUPERUSER ||
 	    options.permit_root_login == PERMIT_YES))
 		buffer_put_cstring(&buffer, *resp);
 	else {
@@ -1221,7 +1221,7 @@ sshpam_auth_passwd(Authctxt *authctxt, const char *password)
 	 * by PermitRootLogin, use an invalid password to prevent leaking
 	 * information via timing (eg if the PAM config has a delay on fail).
 	 */
-	if (!authctxt->valid || (authctxt->pw->pw_uid == 0 &&
+	if (!authctxt->valid || (authctxt->pw->pw_uid == SUPERUSER &&
 	    options.permit_root_login != PERMIT_YES))
 		sshpam_password = fake = fake_password(password);
 

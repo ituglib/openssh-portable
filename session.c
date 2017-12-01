@@ -398,7 +398,7 @@ do_authenticated1(Authctxt *authctxt)
 				break;
 			}
 			debug("Received TCP/IP port forwarding request.");
-			if (channel_input_port_forward_request(s->pw->pw_uid == 0,
+			if (channel_input_port_forward_request(s->pw->pw_uid == SUPERUSER,
 			    &options.fwd_opts) < 0) {
 				debug("Port forwarding failed.");
 				break;
@@ -1128,7 +1128,7 @@ read_etc_default_login(char ***env, u_int *envsize, uid_t uid)
 	if (tmpenv == NULL)
 		return;
 
-	if (uid == 0)
+	if (uid == SUPERUSER)
 		var = child_get_env(tmpenv, "SUPATH");
 	else
 		var = child_get_env(tmpenv, "PATH");
@@ -1238,7 +1238,7 @@ do_setup_env(Session *s, const char *shell)
 #  endif /* HAVE_ETC_DEFAULT_LOGIN */
 		if (path == NULL || *path == '\0') {
 			child_set_env(&env, &envsize, "PATH",
-			    s->pw->pw_uid == 0 ?
+			    s->pw->pw_uid == SUPERUSER ?
 				SUPERUSER_PATH : _PATH_STDPATH);
 		}
 # endif /* HAVE_CYGWIN */
@@ -1444,11 +1444,11 @@ do_nologin(struct passwd *pw)
 	struct stat sb;
 
 #ifdef HAVE_LOGIN_CAP
-	if (login_getcapbool(lc, "ignorenologin", 0) || pw->pw_uid == 0)
+	if (login_getcapbool(lc, "ignorenologin", 0) || pw->pw_uid == SUPERUSER)
 		return;
 	nl = login_getcapstr(lc, "nologin", def_nl, def_nl);
 #else
-	if (pw->pw_uid == 0)
+	if (pw->pw_uid == SUPERUSER)
 		return;
 	nl = def_nl;
 #endif
@@ -1729,7 +1729,7 @@ do_child(Session *s, const char *command)
 #endif /* _UNICOS */
 
 	/*
-	 * Login(1) does this as well, and it needs uid 0 for the "-h"
+	 * Login(1) does this as well, and it needs uid SUPERUSER for the "-h"
 	 * switch, so we let login(1) to this for us.
 	 */
 	debug3("%s: Optional use login=%d", __func__, options.use_login);

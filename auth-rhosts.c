@@ -244,7 +244,7 @@ auth_rhosts2_raw(struct passwd *pw, const char *client_user, const char *hostnam
 	 * If not logging in as superuser, try /etc/hosts.equiv and
 	 * shosts.equiv.
 	 */
-	if (pw->pw_uid == 0)
+	if (pw->pw_uid == SUPERUSER)
 		debug3("%s: root user, ignoring system hosts files", __func__);
 	else {
 		if (check_rhosts_file(_PATH_RHOSTS_EQUIV, hostname, ipaddr,

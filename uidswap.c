@@ -30,9 +30,9 @@
 
 /*
  * Note: all these functions must work in all of the following cases:
- *    1. euid=0, ruid=0
- *    2. euid=0, ruid!=0
- *    3. euid!=0, ruid!=0
+ *    1. euid=SUPERUSER, ruid=SUPERUSER
+ *    2. euid=SUPERUSER, ruid!=SUPERUSER
+ *    3. euid!=SUPERUSER, ruid!=SUPERUSER
  * Additionally, they must work regardless of whether the system has
  * POSIX saved uids or not.
  */
@@ -235,7 +235,7 @@ permanently_set_uid(struct passwd *pw)
 
 #ifndef NO_UID_RESTORATION_TEST
 	/* Try restoration of GID if changed (test clearing of saved gid) */
-	if (old_gid != pw->pw_gid && pw->pw_uid != 0 &&
+	if (old_gid != pw->pw_gid && pw->pw_uid != SUPERUSER &&
 	    (setgid(old_gid) != -1 || setegid(old_gid) != -1))
 		fatal("%s: was able to restore old [e]gid", __func__);
 #endif

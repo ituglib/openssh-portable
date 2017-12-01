@@ -322,7 +322,7 @@ do_authloop(Authctxt *authctxt)
 
 #ifndef HAVE_CYGWIN
 		/* Special handling for root */
-		if (authenticated && authctxt->pw->pw_uid == 0 &&
+		if (authenticated && authctxt->pw->pw_uid == SUPERUSER &&
 		    !auth_root_allowed(meth->name)) {
  			authenticated = 0;
 # ifdef SSH_AUDIT_EVENTS

@@ -1252,7 +1252,7 @@ server_input_global_request(int type, u_int32_t seq, void *ctxt)
 		    no_port_forwarding_flag ||
 		    (!want_reply && fwd.listen_port == 0) ||
 		    (fwd.listen_port != 0 && fwd.listen_port < IPPORT_RESERVED &&
-		    pw->pw_uid != 0)) {
+		    pw->pw_uid != SUPERUSER)) {
 			success = 0;
 			packet_send_debug("Server has disabled port forwarding.");
 		} else {

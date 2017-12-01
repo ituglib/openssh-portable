@@ -134,6 +134,7 @@ platform_setusercontext(struct passwd *pw)
 #if !defined(HAVE_LOGIN_CAP) && defined(HAVE_GETLUID) && defined(HAVE_SETLUID)
 	if (getuid() == SUPERUSER || geteuid() == SUPERUSER) {
 		/* Sets login uid for accounting */
+		/* Not supported on NonStop */
 		if (getluid() == -1 && setluid(pw->pw_uid) == -1)
 			error("setluid: %s", strerror(errno));
 	}
@@ -207,7 +208,7 @@ platform_krb5_get_principal_name(const char *pw_name)
 int
 platform_sys_dir_uid(uid_t uid)
 {
-	if (uid == 0)
+	if (uid == SUPERUSER)
 		return 1;
 #ifdef PLATFORM_SYS_DIR_UID
 	if (uid == PLATFORM_SYS_DIR_UID)
