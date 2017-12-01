@@ -72,11 +72,15 @@
 
 #include "log.h"
 
+#if ! defined (__TANDEM)
 int	opterr = 1;		/* if error message should be printed */
 int	optind = 1;		/* index into parent argv vector */
 int	optopt = '?';		/* character checked for validity */
+#endif
 int	optreset;		/* reset getopt */
+#if ! defined (__TANDEM)
 char    *optarg;		/* argument associated with option */
+#endif
 
 #define PRINT_ERROR	((opterr) && (*options != ':'))
 

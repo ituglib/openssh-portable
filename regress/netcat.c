@@ -112,6 +112,7 @@ int	Tflag = -1;				/* IP Type of Service */
 int	rtableid = -1;
 
 int timeout = -1;
+extern int timeout;
 int family = AF_UNSPEC;
 char *portlist[PORT_MAX+1];
 char *unix_dg_tmp_socket;
