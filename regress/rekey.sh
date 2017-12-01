@@ -62,7 +62,9 @@ if ${SSH} -Q cipher-auth | grep '^.*$' >/dev/null 2>&1 ; then
   done
 fi
 
-for s in 16 1k 128k 256k; do
+# RSB: 16 takes too long to process on NonStop
+#for s in 16 1k 128k 256k; do
+for s in 1k 128k 256k; do
 	verbose "client rekeylimit ${s}"
 	ssh_data_rekeying "" -oCompression=no -oRekeyLimit=$s
 done
@@ -100,7 +102,9 @@ for s in 5 10; do
 	fi
 done
 
-for s in 16 1k 128k 256k; do
+# RSB: 16 takes too long to process on NonStop
+# for s in 16 1k 128k 256k; do
+for s in 1k 128k 256k; do
 	verbose "server rekeylimit ${s}"
 	cp $OBJ/sshd_proxy_bak $OBJ/sshd_proxy
 	echo "rekeylimit ${s}" >>$OBJ/sshd_proxy

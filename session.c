@@ -462,6 +462,8 @@ do_exec_no_pty(Session *s, const char *command)
 #ifdef USE_PIPES
 	int pin[2], pout[2], perr[2];
 
+	debug3("%s: executing %", __func__, command);
+
 	if (s == NULL)
 		fatal("do_exec_no_pty: no session");
 
@@ -488,6 +490,8 @@ do_exec_no_pty(Session *s, const char *command)
 #else
 	int inout[2], err[2];
 
+	debug3("%s: executing %", __func__, command);
+
 	if (s == NULL)
 		fatal("do_exec_no_pty: no session");
 
@@ -508,6 +512,8 @@ do_exec_no_pty(Session *s, const char *command)
 	session_proctitle(s);
 
 	/* Fork the child. */
+	debug3("%s: initiating fork()", __func__);
+
 	switch ((pid = fork())) {
 	case -1:
 		error("%s: fork: %.100s", __func__, strerror(errno));
@@ -526,6 +532,7 @@ do_exec_no_pty(Session *s, const char *command)
 #endif
 		return -1;
 	case 0:
+		debug3("%s: fork() in child", __func__);
 		is_child = 1;
 
 		/* Child.  Reinitialize the log since the pid has changed. */
@@ -583,6 +590,7 @@ do_exec_no_pty(Session *s, const char *command)
 		cray_init_job(s->pw); /* set up cray jid and tmpdir */
 #endif
 
+		debug3("%s: calling do_child()", __func__);
 		/* Do processing for the child (exec command etc). */
 		do_child(s, command);
 		/* NOTREACHED */
@@ -1494,7 +1502,7 @@ safely_chroot(const char *path, uid_t uid)
 		if (stat(component, &st) != 0)
 			fatal("%s: stat(\"%s\"): %s", __func__,
 			    component, strerror(errno));
-		if (st.st_uid != 0 || (st.st_mode & 022) != 0)
+		if (st.st_uid != SUPERUSER || (st.st_mode & 022) != 0)
 			fatal("bad ownership or modes for chroot "
 			    "directory %s\"%s\"", 
 			    cp == NULL ? "" : "component ", component);
@@ -1600,6 +1608,7 @@ do_setusercontext(struct passwd *pw)
 static void
 do_pwchange(Session *s)
 {
+	debug3("%s: About to flush all",__func__);
 	fflush(NULL);
 	fprintf(stderr, "WARNING: Your password has expired.\n");
 	if (s->ttyfd != -1) {
@@ -1619,6 +1628,7 @@ do_pwchange(Session *s)
 		fprintf(stderr,
 		    "Password change required but no TTY available.\n");
 	}
+	debug3("%s: Exit",__func__);
 	exit(1);
 }
 
@@ -1699,6 +1709,7 @@ do_child(Session *s, const char *command)
 	int r = 0;
 
 	/* remove hostkey from the child's memory */
+	debug3("%s: entering do_child()", __func__);
 	destroy_sensitive_data();
 
 	/* Force a password change */
@@ -1721,6 +1732,7 @@ do_child(Session *s, const char *command)
 	 * Login(1) does this as well, and it needs uid 0 for the "-h"
 	 * switch, so we let login(1) to this for us.
 	 */
+	debug3("%s: Optional use login=%d", __func__, options.use_login);
 	if (!options.use_login) {
 #ifdef HAVE_OSF_SIA
 		session_setup_sia(pw, s->ttyfd == -1 ? NULL : s->tty);
@@ -1755,6 +1767,7 @@ do_child(Session *s, const char *command)
 	 */
 	shell = (pw->pw_shell[0] == '\0') ? _PATH_BSHELL : pw->pw_shell;
 
+	debug3("%s: Shell path=%s", __func__, shell );
 	/*
 	 * Make sure $SHELL points to the shell from the password file,
 	 * even if shell is overridden from login.conf
@@ -1836,6 +1849,7 @@ do_child(Session *s, const char *command)
 	if (s->is_subsystem == SUBSYSTEM_INT_SFTP_ERROR) {
 		printf("This service allows sftp connections only.\n");
 		fflush(NULL);
+		debug3("%s: Exit",__func__);
 		exit(1);
 	} else if (s->is_subsystem == SUBSYSTEM_INT_SFTP) {
 		extern int optind, optreset;
@@ -1856,6 +1870,7 @@ do_child(Session *s, const char *command)
 		exit(sftp_server_main(i, argv, s->pw));
 	}
 
+	debug3("%s: Passed initial restrictions",__func__);
 	fflush(NULL);
 
 	if (options.use_login) {
@@ -1890,6 +1905,7 @@ do_child(Session *s, const char *command)
 		/* Execute the shell. */
 		argv[0] = argv0;
 		argv[1] = NULL;
+		debug3("%s: Shell args=%s", __func__, argv0);
 		execve(shell, argv, env);
 
 		/* Executing the shell failed. */
@@ -1904,6 +1920,11 @@ do_child(Session *s, const char *command)
 	argv[1] = "-c";
 	argv[2] = (char *) command;
 	argv[3] = NULL;
+	if ( command != NULL ) 
+              debug3("%s: Shell args=%s -c %s", __func__, (char *) shell0, (char *) command);
+	else
+              debug3("%s: Shell args=%s -c ", __func__, (char *) shell0);
+
 	execve(shell, argv, env);
 	perror(shell);
 	exit(1);
@@ -2388,7 +2409,7 @@ session_pty_cleanup2(Session *s)
 		record_logout(s->pid, s->tty, s->pw->pw_name);
 
 	/* Release the pseudo-tty. */
-	if (getuid() == 0)
+	if (getuid() == SUPERUSER)
 		pty_release(s->tty);
 
 	/*
@@ -2483,6 +2504,7 @@ static void
 session_exit_message(Session *s, int status)
 {
 	Channel *c;
+	debug3("%s: status: %d", __func__, status);
 
 	if ((c = channel_lookup(s->chanid)) == NULL)
 		fatal("session_exit_message: session %d: no channel %d",

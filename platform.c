@@ -88,7 +88,7 @@ platform_privileged_uidswap(void)
 	/* uid 0 is not special on Cygwin so always try */
 	return 1;
 #else
-	return (getuid() == 0 || geteuid() == 0);
+	return (getuid() == SUPERUSER || geteuid() == SUPERUSER);
 #endif
 }
 
@@ -110,12 +110,12 @@ platform_setusercontext(struct passwd *pw)
 	 * we are using PAM in which case it is the responsibility of the
 	 * PAM stack.
 	 */
-	if (!options.use_pam && (getuid() == 0 || geteuid() == 0))
+	if (!options.use_pam && (getuid() == SUPERUSER || geteuid() == SUPERUSER))
 		solaris_set_default_project(pw);
 #endif
 
 #if defined(HAVE_LOGIN_CAP) && defined (__bsdi__)
-	if (getuid() == 0 || geteuid() == 0)
+	if (getuid() == SUPERUSER || geteuid() == SUPERUSER)
 		setpgid(0, 0);
 # endif
 
@@ -124,7 +124,7 @@ platform_setusercontext(struct passwd *pw)
 	 * If we have both LOGIN_CAP and PAM, we want to establish creds
 	 * before calling setusercontext (in session.c:do_setusercontext).
 	 */
-	if (getuid() == 0 || geteuid() == 0) {
+	if (getuid() == SUPERUSER || geteuid() == SUPERUSER) {
 		if (options.use_pam) {
 			do_pam_setcred(use_privsep);
 		}
@@ -132,7 +132,7 @@ platform_setusercontext(struct passwd *pw)
 # endif /* USE_PAM */
 
 #if !defined(HAVE_LOGIN_CAP) && defined(HAVE_GETLUID) && defined(HAVE_SETLUID)
-	if (getuid() == 0 || geteuid() == 0) {
+	if (getuid() == SUPERUSER || geteuid() == SUPERUSER) {
 		/* Sets login uid for accounting */
 		if (getluid() == -1 && setluid(pw->pw_uid) == -1)
 			error("setluid: %s", strerror(errno));

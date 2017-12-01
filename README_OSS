@@ -1,0 +1,14 @@
+# Port for NonStop OSS
+# Guesses
+
+0. Merge the openssh tag with your branch. You know know how to do this.
+
+1. Apply/merge configure.ac script changes (should be automatic from git).
+   This pulls in #ifdef __TANDEM for generated files. Check it.
+
+2. Run:
+conf_script_floss_cc --without-openssl-header-check
+
+3. Check configure to ensure that the #ifdef __TANDEM constructs are there.
+
+

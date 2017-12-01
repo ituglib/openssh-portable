@@ -5,7 +5,10 @@
 # simple wrapper for sshd proxy mode to catch stderr output
 # sh sshd-log-wrapper.sh /path/to/logfile /path/to/sshd [args...]
 
+# set -x
 log=$1
 shift
 
-exec "$@" -E$log
+# TEMP_FILE=/tmp/$RANDOM.sshd.test
+exec "$@" -E$log # > $TEMP_FILE
+# cat $TEMP_FILE

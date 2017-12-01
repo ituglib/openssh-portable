@@ -36,6 +36,10 @@
 
 #include "includes.h"
 
+#ifdef __TANDEM
+#include <floss.h(floss_write,floss_read)>
+#endif
+
 #include <sys/param.h>	/* MIN MAX */
 #include <sys/types.h>
 #include <sys/param.h>
@@ -1072,7 +1076,7 @@ after_select(fd_set *readset, fd_set *writeset)
 					close(sock);
 					break;
 				}
-				if ((euid != 0) && (getuid() != euid)) {
+				if ((euid != SUPERUSER) && (getuid() != euid)) {
 					error("uid mismatch: "
 					    "peer euid %u != uid %u",
 					    (u_int) euid, (u_int) getuid());

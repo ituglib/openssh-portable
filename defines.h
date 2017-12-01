@@ -390,8 +390,11 @@ struct winsize {
 #endif
 
 /* bits needed for select that may not be in the system headers */
+#ifndef __TANDEM
+/* configure gets this wrong */
 #ifndef HAVE_FD_MASK
  typedef unsigned long int	fd_mask;
+#endif
 #endif
 
 #if defined(HAVE_DECL_NFDBITS) && HAVE_DECL_NFDBITS == 0
