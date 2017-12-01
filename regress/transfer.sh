@@ -10,17 +10,27 @@ for p in ${SSH_PROTOCOLS}; do
 	if [ $? -ne 0 ]; then
 		fail "ssh cat $DATA failed"
 	fi
-	cmp ${DATA} ${COPY}		|| fail "corrupted copy"
+	diff ${DATA} ${COPY}
+	if [ $? -ne 0 ]; then
+		fail "corrupted copy"
+	fi
 
-	for s in 10 100 1k 32k 64k 128k 256k; do
-		trace "proto $p dd-size ${s}"
+	# NonStop only supports up to 32k based on limits.h
+	#for s in 10 100 1k 32k 64k 128k 256k; do
+	for s in 10 100 1k 32k ; do
+		verbose "proto $p dd-size ${s}"
 		rm -f ${COPY}
 		dd if=$DATA obs=${s} 2> /dev/null | \
 			${SSH} -q -$p -F $OBJ/ssh_proxy somehost "cat > ${COPY}"
 		if [ $? -ne 0 ]; then
 			fail "ssh cat $DATA failed"
 		fi
-		cmp $DATA ${COPY}		|| fail "corrupted copy"
+		# RSB Changed this to diff from cmp and removed ||
+		diff ${DATA} ${COPY}
+		if [ $? -ne 0 ]; then
+			fail "corrupted copy"
+			ls -l ${DATA} ${COPY}
+		fi
 	done
 done
 rm -f ${COPY}
