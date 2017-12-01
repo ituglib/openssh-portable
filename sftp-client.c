@@ -22,6 +22,10 @@
 
 #include "includes.h"
 
+#ifdef __TANDEM
+#include <floss.h(floss_write,floss_read)>
+#endif
+
 #include <sys/param.h>	/* MIN MAX */
 #include <sys/types.h>
 #ifdef HAVE_SYS_STATVFS_H
