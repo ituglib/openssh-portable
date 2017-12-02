@@ -1250,7 +1250,13 @@ response(void)
 		exit(1);
 	}
 	/* NOTREACHED */
+#if defined (__TANDEM)
+#pragma NOWARN(1252)
+#endif
 }
+#if defined (__TANDEM)
+#pragma WARN(1252)
+#endif
 
 void
 usage(void)

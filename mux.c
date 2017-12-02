@@ -32,6 +32,10 @@
 
 #include "includes.h"
 
+#ifdef __TANDEM
+#include <floss.h(floss_write,floss_read)>
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
@@ -1974,7 +1978,13 @@ mux_client_request_session(int fd)
 		fprintf(stderr, "Shared connection to %s closed.\r\n", host);
 
 	exit(exitval);
+#if defined (__TANDEM)
+#pragma NOWARN(1252)
+#endif
 }
+#if defined (__TANDEM)
+#pragma WARN(1252)
+#endif
 
 static int
 mux_client_proxy(int fd)
@@ -2110,7 +2120,13 @@ mux_client_request_stdio_fwd(int fd)
 		    __func__, strerror(errno));
 	}
 	fatal("%s: master returned unexpected message %u", __func__, type);
+#if defined (__TANDEM)
+#pragma NOWARN(1252)
+#endif
 }
+#if defined (__TANDEM)
+#pragma WARN(1252)
+#endif
 
 static void
 mux_client_request_stop_listening(int fd)
@@ -2264,4 +2280,10 @@ muxclient(const char *path)
 	default:
 		fatal("unrecognised muxclient_command %d", muxclient_command);
 	}
+#if defined (__TANDEM)
+#pragma NOWARN(1252)
+#endif
 }
+#if defined (__TANDEM)
+#pragma WARN(1252)
+#endif

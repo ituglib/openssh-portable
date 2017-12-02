@@ -37,6 +37,11 @@
 
 #include "includes.h"
 
+#ifdef __TANDEM
+#include <floss.h(floss_write,floss_read)>
+#endif
+
+#include <sys/param.h>	/* MIN MAX */
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/socket.h>
@@ -340,9 +345,12 @@ collect_children(void)
 	if (child_terminated) {
 		debug("Received SIGCHLD.");
 		while ((pid = waitpid(-1, &status, WNOHANG)) > 0 ||
-		    (pid < 0 && errno == EINTR))
+		    (pid < 0 && errno == EINTR)) {
+			debug3("%s: received pid %d with errno %d", __func__, pid, errno);
 			if (pid > 0)
 				session_close_by_pid(pid, status);
+		}
+		debug3("%s: while exit received pid %d with errno %d", __func__, pid, errno);
 		child_terminated = 0;
 	}
 	sigprocmask(SIG_SETMASK, &oset, NULL);

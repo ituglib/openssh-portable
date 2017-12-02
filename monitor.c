@@ -231,7 +231,7 @@ struct mon_table mon_dispatch_proto20[] = {
     {MONITOR_REQ_GSSUSEROK, MON_ONCE|MON_AUTHDECIDE, mm_answer_gss_userok},
     {MONITOR_REQ_GSSCHECKMIC, MON_ONCE, mm_answer_gss_checkmic},
 #endif
-    {0, 0, NULL}
+    {(enum monitor_reqtype)0, 0, NULL}
 };
 
 struct mon_table mon_dispatch_postauth20[] = {
@@ -246,7 +246,7 @@ struct mon_table mon_dispatch_postauth20[] = {
     {MONITOR_REQ_AUDIT_EVENT, MON_PERMIT, mm_answer_audit_event},
     {MONITOR_REQ_AUDIT_COMMAND, MON_PERMIT, mm_answer_audit_command},
 #endif
-    {0, 0, NULL}
+    {(enum monitor_reqtype)0, 0, NULL}
 };
 
 struct mon_table *mon_dispatch;
@@ -448,10 +448,10 @@ monitor_read_log(struct monitor *pmonitor)
 	/* Log it */
 	level = buffer_get_int(&logmsg);
 	msg = buffer_get_string(&logmsg, NULL);
-	if (log_level_name(level) == NULL)
+	if (log_level_name((LogLevel)level) == NULL)
 		fatal("%s: invalid log level %u (corrupted message?)",
 		    __func__, level);
-	do_log2(level, "%s [preauth]", msg);
+	do_log2((LogLevel)level, "%s [preauth]", msg);
 
 	buffer_free(&logmsg);
 	free(msg);
@@ -1123,12 +1123,12 @@ mm_answer_keyallowed(int sock, Buffer *m)
 	char *cuser, *chost;
 	u_char *blob;
 	u_int bloblen, pubkey_auth_attempt;
-	enum mm_keytype type = 0;
+	enum mm_keytype type = (enum mm_keytype)0;
 	int allowed = 0;
 
 	debug3("%s entering", __func__);
 
-	type = buffer_get_int(m);
+	type = (enum mm_keytype)buffer_get_int(m);
 	cuser = buffer_get_string(m, NULL);
 	chost = buffer_get_string(m, NULL);
 	blob = buffer_get_string(m, &bloblen);
@@ -1534,7 +1534,13 @@ mm_answer_term(int sock, Buffer *req)
 
 	/* Terminate process */
 	exit(res);
+#if defined (__TANDEM)
+#pragma NOWARN(1252)
+#endif
 }
+#if defined (__TANDEM)
+#pragma WARN(1252)
+#endif
 
 #ifdef SSH_AUDIT_EVENTS
 /* Report that an audit event occurred */

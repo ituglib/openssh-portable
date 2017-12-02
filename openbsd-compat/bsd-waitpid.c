@@ -47,7 +47,8 @@ waitpid(int pid, int *stat_loc, int options)
 	if (stat_loc)
 		*stat_loc = (int) statusp.w_status;
 
-	return (wait_pid);
+	debug3("%s: got back pid %d", __func__, wait_pid);
+        return (wait_pid);
 }
 
 #endif /* !HAVE_WAITPID */

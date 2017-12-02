@@ -436,7 +436,7 @@ int
 login_write(struct logininfo *li)
 {
 #ifndef HAVE_CYGWIN
-	if (geteuid() != 0) {
+	if (geteuid() != SUPERUSER) {
 		logit("Attempt to write login records by non-root user (aborting)");
 		return (1);
 	}
@@ -1670,7 +1670,7 @@ record_failed_login(const char *username, const char *hostname,
 	time_t t;
 	struct stat fst;
 
-	if (geteuid() != 0)
+	if (geteuid() != SUPERUSER)
 		return;
 	if ((fd = open(_PATH_BTMP, O_WRONLY | O_APPEND)) < 0) {
 		debug("Unable to open the btmp file %s: %s", _PATH_BTMP,
@@ -1682,7 +1682,7 @@ record_failed_login(const char *username, const char *hostname,
 		    strerror(errno));
 		goto out;
 	}
-	if((fst.st_mode & (S_IXGRP | S_IRWXO)) || (fst.st_uid != 0)){
+	if((fst.st_mode & (S_IXGRP | S_IRWXO)) || (fst.st_uid != SUPERUSER)){
 		logit("Excess permission or bad ownership on file %s",
 		    _PATH_BTMP);
 		goto out;

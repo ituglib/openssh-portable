@@ -27,6 +27,10 @@
 
 #include "includes.h"
 
+#if defined (__TANDEM)
+#include <string.h>
+#endif
+
 #ifndef HAVE_ERR
 void
 err(int r, const char *fmt, ...)

@@ -586,7 +586,7 @@ pkcs11_add_provider(char *provider_id, char *pin, struct sshkey ***keyp)
 		error("dlopen %s failed: %s", provider_id, dlerror());
 		goto fail;
 	}
-	if ((getfunctionlist = dlsym(handle, "C_GetFunctionList")) == NULL) {
+	if ((getfunctionlist = (CK_RV (*)(CK_FUNCTION_LIST **))dlsym(handle, "C_GetFunctionList")) == NULL) {
 		error("dlsym(C_GetFunctionList) failed: %s", dlerror());
 		goto fail;
 	}
