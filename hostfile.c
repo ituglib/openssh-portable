@@ -215,7 +215,7 @@ check_markers(char **cpp)
 			;
 	}
 	*cpp = cp;
-	return ret;
+	return (HostkeyMarker)ret;
 }
 
 struct hostkeys *
@@ -260,7 +260,7 @@ record_hostkey(struct hostkey_foreach_line *l, void *_ctx)
 	hostkeys->entries[hostkeys->num_entries].line = l->linenum;
 	hostkeys->entries[hostkeys->num_entries].key = l->key;
 	l->key = NULL; /* steal it */
-	hostkeys->entries[hostkeys->num_entries].marker = l->marker;
+	hostkeys->entries[hostkeys->num_entries].marker = (HostkeyMarker)l->marker;
 	hostkeys->num_entries++;
 	ctx->num_loaded++;
 
@@ -511,7 +511,7 @@ host_delete(struct hostkey_foreach_line *l, void *_ctx)
 		 * Hostname matches and has no CA/revoke marker, delete it
 		 * by *not* writing the line to ctx->out.
 		 */
-		do_log2(loglevel, "%s%s%s:%ld: Removed %s key for host %s",
+		do_log2((LogLevel)loglevel, "%s%s%s:%ld: Removed %s key for host %s",
 		    ctx->quiet ? __func__ : "", ctx->quiet ? ": " : "",
 		    l->path, l->linenum, sshkey_type(l->key), ctx->host);
 		ctx->modified = 1;
@@ -519,7 +519,7 @@ host_delete(struct hostkey_foreach_line *l, void *_ctx)
 	}
 	/* Retain non-matching hosts and invalid lines when deleting */
 	if (l->status == HKF_STATUS_INVALID) {
-		do_log2(loglevel, "%s%s%s:%ld: invalid known_hosts entry",
+		do_log2((LogLevel)loglevel, "%s%s%s:%ld: invalid known_hosts entry",
 		    ctx->quiet ? __func__ : "", ctx->quiet ? ": " : "",
 		    l->path, l->linenum);
 	}
@@ -588,7 +588,7 @@ hostfile_replace_entries(const char *filename, const char *host, const char *ip,
 			r = SSH_ERR_ALLOC_FAIL;
 			goto fail;
 		}
-		do_log2(loglevel, "%s%sAdding new key for %s to %s: %s %s",
+		do_log2((LogLevel)loglevel, "%s%sAdding new key for %s to %s: %s %s",
 		    quiet ? __func__ : "", quiet ? ": " : "", host, filename,
 		    sshkey_ssh_name(keys[i]), fp);
 		free(fp);

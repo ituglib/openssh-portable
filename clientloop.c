@@ -2277,7 +2277,7 @@ update_known_hosts(struct hostkeys_update_ctx *ctx)
 		if ((fp = sshkey_fingerprint(ctx->keys[i],
 		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 			fatal("%s: sshkey_fingerprint failed", __func__);
-		do_log2(loglevel, "Learned new hostkey: %s %s",
+		do_log2((LogLevel)loglevel, "Learned new hostkey: %s %s",
 		    sshkey_type(ctx->keys[i]), fp);
 		free(fp);
 	}
@@ -2285,7 +2285,7 @@ update_known_hosts(struct hostkeys_update_ctx *ctx)
 		if ((fp = sshkey_fingerprint(ctx->old_keys[i],
 		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 			fatal("%s: sshkey_fingerprint failed", __func__);
-		do_log2(loglevel, "Deprecating obsolete hostkey: %s %s",
+		do_log2((LogLevel)loglevel, "Deprecating obsolete hostkey: %s %s",
 		    sshkey_type(ctx->old_keys[i]), fp);
 		free(fp);
 	}
@@ -2306,7 +2306,7 @@ update_known_hosts(struct hostkeys_update_ctx *ctx)
 				options.update_hostkeys = 0;
 				break;
 			} else {
-				do_log2(loglevel, "Please enter "
+				do_log2((LogLevel)loglevel, "Please enter "
 				    "\"yes\" or \"no\"");
 			}
 		}

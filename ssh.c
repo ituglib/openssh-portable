@@ -254,7 +254,7 @@ resolve_host(const char *name, int port, int logerr, char *cname, size_t clen)
 	if ((gaierr = getaddrinfo(name, strport, &hints, &res)) != 0) {
 		if (logerr || (gaierr != EAI_NONAME && gaierr != EAI_NODATA))
 			loglevel = SYSLOG_LEVEL_ERROR;
-		do_log2(loglevel, "%s: Could not resolve hostname %.100s: %s",
+		do_log2((LogLevel)loglevel, "%s: Could not resolve hostname %.100s: %s",
 		    __progname, name, ssh_gai_strerror(gaierr));
 		return NULL;
 	}
