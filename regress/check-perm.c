@@ -61,7 +61,7 @@ safely_chroot(const char *path, uid_t uid)
 		if (stat(component, &st) != 0)
 			fatal("%s: stat(\"%s\"): %s", __func__,
 			    component, strerror(errno));
-		if (st.st_uid != 0 || (st.st_mode & 022) != 0)
+		if (st.st_uid != SUPERUSER || (st.st_mode & 022) != 0)
 			fatal("bad ownership or modes for chroot "
 			    "directory %s\"%s\"",
 			    cp == NULL ? "" : "component ", component);
@@ -80,7 +80,7 @@ safely_chroot(const char *path, uid_t uid)
 int
 platform_sys_dir_uid(uid_t uid)
 {
-	if (uid == 0)
+	if (uid == SUPERUSER)
 		return 1;
 #ifdef PLATFORM_SYS_DIR_UID
 	if (uid == PLATFORM_SYS_DIR_UID)

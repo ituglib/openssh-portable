@@ -326,7 +326,7 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
 			if (!(ent->flags & MON_AUTHDECIDE))
 				fatal("%s: unexpected authentication from %d",
 				    __func__, ent->type);
-			if (authctxt->pw->pw_uid == 0 &&
+			if (authctxt->pw->pw_uid == SUPERUSER &&
 			    !auth_root_allowed(auth_method))
 				authenticated = 0;
 #ifdef USE_PAM
