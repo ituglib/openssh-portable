@@ -125,7 +125,7 @@ testAPI()
 	if (be_verbose)
 		dump_logininfo(li1, "li1");
 
-	if ((int)geteuid() != 0) {
+	if ((int)geteuid() != SUPERUSER) {
 		printf("NOT RUNNING LOGIN TESTS - you are not root!\n");
 		return 1;
 	}

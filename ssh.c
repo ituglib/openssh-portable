@@ -1145,7 +1145,7 @@ main(int ac, char **av)
 	if (options.connection_attempts <= 0)
 		fatal("Invalid number of ConnectionAttempts");
 #ifndef HAVE_CYGWIN
-	if (original_effective_uid != 0)
+	if (original_effective_uid != SUPERUSER)
 		options.use_privileged_port = 0;
 #endif
 
@@ -1363,7 +1363,7 @@ main(int ac, char **av)
 	 * user's home directory if it happens to be on a NFS volume where
 	 * root is mapped to nobody.
 	 */
-	if (original_effective_uid == 0) {
+	if (original_effective_uid == SUPERUSER) {
 		PRIV_START;
 		permanently_set_uid(pw);
 	}

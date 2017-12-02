@@ -420,7 +420,7 @@ subprocess(const char *tag, struct passwd *pw, const char *command,
 		restore_uid();
 		return 0;
 	}
-	if (auth_secure_path(av[0], &st, NULL, 0,
+	if (auth_secure_path(av[0], &st, NULL, SUPERUSER,
 	    errmsg, sizeof(errmsg)) != 0) {
 		error("Unsafe %s \"%s\": %s", tag, av[0], errmsg);
 		restore_uid();

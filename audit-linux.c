@@ -61,7 +61,7 @@ linux_audit_record_event(int uid, const char *username, const char *hostname,
 	 * Do not report error if the error is EPERM and sshd is run as non
 	 * root user.
 	 */
-	if ((rc == -EPERM) && (geteuid() != 0))
+	if ((rc == -EPERM) && (geteuid() != SUPERUSER))
 		rc = 0;
 	errno = saved_errno;
 

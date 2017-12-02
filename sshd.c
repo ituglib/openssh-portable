@@ -220,7 +220,7 @@ int *startup_pipes = NULL;
 int startup_pipe;		/* in child */
 
 /* variables used for privilege separation */
-int use_privsep = -1;
+int use_privsep = 0;
 struct monitor *pmonitor = NULL;
 int privsep_is_preauth = 1;
 
@@ -541,7 +541,7 @@ privsep_preauth_child(void)
 	demote_sensitive_data();
 
 	/* Demote the child */
-	if (getuid() == 0 || geteuid() == 0) {
+	if (getuid() == SUPERUSER || geteuid() == SUPERUSER) {
 		/* Change our root directory */
 		if (chroot(_PATH_PRIVSEP_CHROOT_DIR) == -1)
 			fatal("chroot(\"%s\"): %s", _PATH_PRIVSEP_CHROOT_DIR,
@@ -576,6 +576,7 @@ privsep_preauth(Authctxt *authctxt)
 	pid = fork();
 	if (pid == -1) {
 		fatal("fork of unprivileged child failed");
+		return 1;
 	} else if (pid != 0) {
 		debug2("Network child is on pid %ld", (long)pid);
 
@@ -634,7 +635,7 @@ privsep_postauth(Authctxt *authctxt)
 #ifdef DISABLE_FD_PASSING
 	if (1) {
 #else
-	if (authctxt->pw->pw_uid == 0) {
+	if (authctxt->pw->pw_uid == SUPERUSER) {
 #endif
 		/* File descriptor passing is broken or root login */
 		use_privsep = 0;
@@ -1389,7 +1390,7 @@ main(int ac, char **av)
 	av = saved_argv;
 #endif
 
-	if (geteuid() == 0 && setgroups(0, NULL) == -1)
+	if (geteuid() == SUPERUSER && setgroups(0, NULL) == -1)
 		debug("setgroups(): %.200s", strerror(errno));
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
@@ -1766,7 +1767,7 @@ main(int ac, char **av)
 		    (st.st_uid != getuid () ||
 		    (st.st_mode & (S_IWGRP|S_IWOTH)) != 0))
 #else
-		if (st.st_uid != 0 || (st.st_mode & (S_IWGRP|S_IWOTH)) != 0)
+		if (st.st_uid != SUPERUSER || (st.st_mode & (S_IWGRP|S_IWOTH)) != 0)
 #endif
 			fatal("%s must be owned by root and not group or "
 			    "world-writable.", _PATH_PRIVSEP_CHROOT_DIR);
