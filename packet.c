@@ -39,6 +39,11 @@
 
 #include "includes.h"
 
+#ifdef __TANDEM
+#include <floss.h(floss_write,floss_read)>
+#endif
+
+#include <sys/param.h>	/* MIN roundup */
 #include <sys/types.h>
 #include "openbsd-compat/sys-queue.h"
 #include <sys/socket.h>

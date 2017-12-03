@@ -25,6 +25,10 @@
 
 #include "includes.h"
 
+#ifdef __TANDEM
+#include <floss.h(floss_write,floss_read)>
+#endif
+
 #include <sys/types.h>
 #include <sys/wait.h>
 

@@ -37,6 +37,11 @@
 
 #include "includes.h"
 
+#ifdef __TANDEM
+#include <floss.h(floss_write,floss_read)>
+#endif
+
+#include <sys/param.h>	/* MIN MAX */
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/socket.h>
@@ -353,9 +358,12 @@ collect_children(struct ssh *ssh)
 	if (child_terminated) {
 		debug("Received SIGCHLD.");
 		while ((pid = waitpid(-1, &status, WNOHANG)) > 0 ||
-		    (pid < 0 && errno == EINTR))
+		    (pid < 0 && errno == EINTR)) {
+			debug3("%s: received pid %d with errno %d", __func__, pid, errno);
 			if (pid > 0)
 				session_close_by_pid(ssh, pid, status);
+		}
+		debug3("%s: while exit received pid %d with errno %d", __func__, pid, errno);
 		child_terminated = 0;
 	}
 	sigprocmask(SIG_SETMASK, &oset, NULL);
@@ -498,7 +506,7 @@ server_request_direct_streamlocal(struct ssh *ssh)
 	/* XXX fine grained permissions */
 	if ((options.allow_streamlocal_forwarding & FORWARD_LOCAL) != 0 &&
 	    !no_port_forwarding_flag && !options.disable_forwarding &&
-	    (pw->pw_uid == 0 || use_privsep)) {
+	    (pw->pw_uid == SUPERUSER || use_privsep)) {
 		c = channel_connect_to_path(ssh, target,
 		    "direct-streamlocal@openssh.com", "direct-streamlocal");
 	} else {
@@ -781,7 +789,7 @@ server_input_global_request(int type, u_int32_t seq, struct ssh *ssh)
 		/* check permissions */
 		if ((options.allow_streamlocal_forwarding & FORWARD_REMOTE) == 0
 		    || no_port_forwarding_flag || options.disable_forwarding ||
-		    (pw->pw_uid != 0 && !use_privsep)) {
+		    (pw->pw_uid != SUPERUSER && !use_privsep)) {
 			success = 0;
 			packet_send_debug("Server has disabled "
 			    "streamlocal forwarding.");

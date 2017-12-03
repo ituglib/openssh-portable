@@ -115,7 +115,11 @@ struct __res_state _res;
 
 #ifndef HAVE__GETSHORT
 static u_int16_t
+#ifdef __TANDEM /* workaround for nasty bug on NonStop */
+__getshort(msgp)
+#else
 _getshort(msgp)
+#endif
 	register const u_char *msgp;
 {
 	register u_int16_t u;
@@ -126,10 +130,17 @@ _getshort(msgp)
 #elif defined(HAVE_DECL__GETSHORT) && (HAVE_DECL__GETSHORT == 0)
 u_int16_t _getshort(register const u_char *);
 #endif
+#ifdef __TANDEM /* workaround for nasty bug on NonStop */
+# define _getshort __getshort
+#endif
 
 #ifndef HAVE__GETLONG
 static u_int32_t
+#ifdef __TANDEM /* workaround for nasty bug on NonStop */
+__getlong(msgp)
+#else
 _getlong(msgp)
+#endif
 	register const u_char *msgp;
 {
 	register u_int32_t u;
@@ -139,6 +150,9 @@ _getlong(msgp)
 }
 #elif defined(HAVE_DECL__GETLONG) && (HAVE_DECL__GETLONG == 0)
 u_int32_t _getlong(register const u_char *);
+#endif
+#ifdef __TANDEM /* workaround for nasty bug on NonStop */
+# define _getlong __getlong
 #endif
 
 /* ************** */
@@ -465,7 +479,11 @@ parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
 			prev->next = curr;
 
 		/* name */
+#ifdef __TANDEM
+		length = dn_expand((u_char *)answer, (u_char *)(answer + size), (u_char *)*cp, (u_char *)name,
+#else
 		length = dn_expand(answer, answer + size, *cp, name,
+#endif
 		    sizeof(name));
 		if (length < 0) {
 			free_dns_query(head);
@@ -512,7 +530,11 @@ parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
 			prev->next = curr;
 
 		/* name */
+#ifdef __TANDEM
+		length = dn_expand((u_char *)answer, (u_char *)(answer + size), (u_char *)*cp, (u_char *)name,
+#else
 		length = dn_expand(answer, answer + size, *cp, name,
+#endif
 		    sizeof(name));
 		if (length < 0) {
 			free_dns_rr(head);

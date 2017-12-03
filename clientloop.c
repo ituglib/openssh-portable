@@ -61,6 +61,11 @@
 
 #include "includes.h"
 
+#ifdef __TANDEM
+#include <floss.h(floss_write,floss_read)>
+#endif
+
+#include <sys/param.h>	/* MIN MAX */
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #ifdef HAVE_SYS_STAT_H
@@ -1733,6 +1738,8 @@ client_input_channel_req(int type, u_int32_t seq, struct ssh *ssh)
 			/* Record exit value of local session */
 			success = 1;
 			exit_status = exitval;
+			debug("%s: exit-status set to %d at %d",
+			    __func__, exit_status, __LINE__ );
 		} else {
 			/* Probably for a mux channel that has already closed */
 			debug("%s: no sink for exit-status on channel %d",
@@ -1843,7 +1850,7 @@ update_known_hosts(struct hostkeys_update_ctx *ctx)
 		if ((fp = sshkey_fingerprint(ctx->keys[i],
 		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 			fatal("%s: sshkey_fingerprint failed", __func__);
-		do_log2(loglevel, "Learned new hostkey: %s %s",
+		do_log2((LogLevel)loglevel, "Learned new hostkey: %s %s",
 		    sshkey_type(ctx->keys[i]), fp);
 		free(fp);
 	}
@@ -1851,7 +1858,7 @@ update_known_hosts(struct hostkeys_update_ctx *ctx)
 		if ((fp = sshkey_fingerprint(ctx->old_keys[i],
 		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 			fatal("%s: sshkey_fingerprint failed", __func__);
-		do_log2(loglevel, "Deprecating obsolete hostkey: %s %s",
+		do_log2((LogLevel)loglevel, "Deprecating obsolete hostkey: %s %s",
 		    sshkey_type(ctx->old_keys[i]), fp);
 		free(fp);
 	}
@@ -1872,7 +1879,7 @@ update_known_hosts(struct hostkeys_update_ctx *ctx)
 				options.update_hostkeys = 0;
 				break;
 			} else {
-				do_log2(loglevel, "Please enter "
+				do_log2((LogLevel)loglevel, "Please enter "
 				    "\"yes\" or \"no\"");
 			}
 		}

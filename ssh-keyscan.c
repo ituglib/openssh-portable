@@ -727,7 +727,7 @@ main(int argc, char **argv)
 	if (optind == argc && !fopt_count)
 		usage();
 
-	log_init("ssh-keyscan", log_level, SYSLOG_FACILITY_USER, 1);
+	log_init("ssh-keyscan", (LogLevel)log_level, SYSLOG_FACILITY_USER, 1);
 
 	maxfd = fdlim_get(1);
 	if (maxfd < 0)

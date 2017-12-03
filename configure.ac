@@ -3734,7 +3734,11 @@ fi
 AC_CACHE_CHECK([for struct sockaddr_in6], ac_cv_have_struct_sockaddr_in6, [
 	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
+#ifdef __TANDEM
+#include <netinet/in6.h>
+#else
 #include <netinet/in.h>
+#endif
 		]], [[ struct sockaddr_in6 s; s.sin6_family = 0; ]])],
 	[ ac_cv_have_struct_sockaddr_in6="yes" ],
 	[ ac_cv_have_struct_sockaddr_in6="no"
@@ -3748,7 +3752,11 @@ fi
 AC_CACHE_CHECK([for struct in6_addr], ac_cv_have_struct_in6_addr, [
 	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
+#ifdef __TANDEM
+#include <netinet/in6.h>
+#else
 #include <netinet/in.h>
+#endif
 		]], [[ struct in6_addr s; s.s6_addr[0] = 0; ]])],
 	[ ac_cv_have_struct_in6_addr="yes" ],
 	[ ac_cv_have_struct_in6_addr="no"
@@ -3764,7 +3772,11 @@ dnl Now check for sin6_scope_id
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
+#ifdef __TANDEM
+#include <netinet/in6.h>
+#else
 #include <netinet/in.h>
+#endif
 		])
 fi
 

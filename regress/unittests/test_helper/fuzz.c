@@ -97,7 +97,13 @@ fuzz_ntop(u_int n)
 	default:
 		abort();
 	}
+#if defined (__TANDEM)
+#pragma NOWARN(1252)
+#endif
 }
+#if defined (__TANDEM)
+#pragma WARN(1252)
+#endif
 
 static int
 fuzz_fmt(struct fuzz *fuzz, char *s, size_t n)
@@ -150,7 +156,9 @@ fuzz_fmt(struct fuzz *fuzz, char *s, size_t n)
 		return 0;
 	default:
 		return -1;
+#if ! defined(__TANDEM)
 		abort();
+#endif
 	}
 }
 
@@ -278,7 +286,13 @@ fuzz_strategy_done(struct fuzz *fuzz)
 	default:
 		abort();
 	}
+#if defined (__TANDEM)
+#pragma NOWARN(1252)
+#endif
 }
+#if defined (__TANDEM)
+#pragma WARN(1252)
+#endif
 
 void
 fuzz_next(struct fuzz *fuzz)
@@ -412,7 +426,13 @@ fuzz_len(struct fuzz *fuzz)
 	default:
 		abort();
 	}
+#if defined (__TANDEM)
+#pragma NOWARN(1252)
+#endif
 }
+#if defined (__TANDEM)
+#pragma WARN(1252)
+#endif
 
 u_char *
 fuzz_ptr(struct fuzz *fuzz)
@@ -434,5 +454,11 @@ fuzz_ptr(struct fuzz *fuzz)
 	default:
 		abort();
 	}
+#if defined (__TANDEM)
+#pragma NOWARN(1252)
+#endif
 }
+#if defined (__TANDEM)
+#pragma WARN(1252)
+#endif
 

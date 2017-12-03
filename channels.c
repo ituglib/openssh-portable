@@ -41,6 +41,9 @@
 
 #include "includes.h"
 
+#ifdef __TANDEM
+#include <floss.h(floss_write,floss_read)>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
@@ -2248,7 +2251,7 @@ channel_post_mux_listener(struct ssh *ssh, Channel *c,
 		close(newsock);
 		return;
 	}
-	if ((euid != 0) && (getuid() != euid)) {
+	if ((euid != SUPERUSER) && (getuid() != euid)) {
 		error("multiplex uid mismatch: peer euid %u != uid %u",
 		    (u_int)euid, (u_int)getuid());
 		close(newsock);

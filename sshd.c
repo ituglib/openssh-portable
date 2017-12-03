@@ -219,7 +219,7 @@ int *startup_pipes = NULL;
 int startup_pipe;		/* in child */
 
 /* variables used for privilege separation */
-int use_privsep = -1;
+int use_privsep = 0;
 struct monitor *pmonitor = NULL;
 int privsep_is_preauth = 1;
 static int privsep_chroot = 1;
@@ -624,7 +624,13 @@ privsep_preauth(Authctxt *authctxt)
 
 		return 0;
 	}
+#if defined (__TANDEM)
+#pragma NOWARN(1252)
+#endif
 }
+#if defined (__TANDEM)
+#pragma WARN(1252)
+#endif
 
 static void
 privsep_postauth(Authctxt *authctxt)
@@ -632,7 +638,7 @@ privsep_postauth(Authctxt *authctxt)
 #ifdef DISABLE_FD_PASSING
 	if (1) {
 #else
-	if (authctxt->pw->pw_uid == 0) {
+	if (authctxt->pw->pw_uid == SUPERUSER) {
 #endif
 		/* File descriptor passing is broken or root login */
 		use_privsep = 0;
@@ -1393,7 +1399,7 @@ main(int ac, char **av)
 	av = saved_argv;
 #endif
 
-	if (geteuid() == 0 && setgroups(0, NULL) == -1)
+	if (geteuid() == SUPERUSER && setgroups(0, NULL) == -1)
 		debug("setgroups(): %.200s", strerror(errno));
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
@@ -1636,7 +1642,7 @@ main(int ac, char **av)
 	);
 
 	/* Store privilege separation user for later use if required. */
-	privsep_chroot = use_privsep && (getuid() == 0 || geteuid() == 0);
+	privsep_chroot = use_privsep && (getuid() == SUPERUSER || geteuid() == SUPERUSER);
 	if ((privsep_pw = getpwnam(SSH_PRIVSEP_USER)) == NULL) {
 		if (privsep_chroot || options.kerberos_authentication)
 			fatal("Privilege separation user %s does not exist",
@@ -1769,7 +1775,7 @@ main(int ac, char **av)
 		    (st.st_uid != getuid () ||
 		    (st.st_mode & (S_IWGRP|S_IWOTH)) != 0))
 #else
-		if (st.st_uid != 0 || (st.st_mode & (S_IWGRP|S_IWOTH)) != 0)
+		if (st.st_uid != SUPERUSER || (st.st_mode & (S_IWGRP|S_IWOTH)) != 0)
 #endif
 			fatal("%s must be owned by root and not group or "
 			    "world-writable.", _PATH_PRIVSEP_CHROOT_DIR);

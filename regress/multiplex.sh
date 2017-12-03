@@ -12,6 +12,10 @@ if config_defined DISABLE_FD_PASSING ; then
 	echo "skipped (not supported on this platform)"
 	exit 0
 fi
+if [ `uname` = "NONSTOP_KERNEL" ]; then
+	echo "skipped (not yet ported on NONSTOP)"
+	exit 0
+fi
 
 P=3301  # test port
 
@@ -53,13 +57,13 @@ rm -f ${COPY}
 trace "ssh transfer over multiplexed connection and check result"
 ${SSH} -F $OBJ/ssh_config -S$CTL otherhost cat ${DATA} > ${COPY}
 test -f ${COPY}			|| fail "ssh -Sctl: failed copy ${DATA}" 
-cmp ${DATA} ${COPY}		|| fail "ssh -Sctl: corrupted copy of ${DATA}"
+diff ${DATA} ${COPY}		|| fail "ssh -Sctl: corrupted copy of ${DATA}"
 
 rm -f ${COPY}
 trace "ssh transfer over multiplexed connection and check result"
 ${SSH} -F $OBJ/ssh_config -S $CTL otherhost cat ${DATA} > ${COPY}
 test -f ${COPY}			|| fail "ssh -S ctl: failed copy ${DATA}" 
-cmp ${DATA} ${COPY}		|| fail "ssh -S ctl: corrupted copy of ${DATA}"
+diff ${DATA} ${COPY}		|| fail "ssh -S ctl: corrupted copy of ${DATA}"
 
 rm -f ${COPY}
 trace "sftp transfer over multiplexed connection and check result"

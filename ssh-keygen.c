@@ -1166,8 +1166,10 @@ known_hosts_hash(struct hostkey_foreach_line *l, void *_ctx)
 		fprintf(ctx->out, "%s\n", l->line);
 		return 0;
 	}
+#if ! defined(__TANDEM)
 	/* NOTREACHED */
 	return -1;
+#endif
 }
 
 static int
@@ -2625,7 +2627,7 @@ main(int argc, char **argv)
 	}
 
 	/* reinit */
-	log_init(argv[0], log_level, SYSLOG_FACILITY_USER, 1);
+	log_init(argv[0], (LogLevel)log_level, SYSLOG_FACILITY_USER, 1);
 
 	argv += optind;
 	argc -= optind;

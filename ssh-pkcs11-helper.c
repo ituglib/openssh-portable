@@ -17,6 +17,10 @@
 
 #include "includes.h"
 
+#ifdef __TANDEM
+#include <floss.h(floss_write,floss_read)>
+#endif
+
 #include <sys/types.h>
 #ifdef HAVE_SYS_TIME_H
 # include <sys/time.h>
