@@ -56,7 +56,13 @@ buffer_check_alloc(Buffer *buffer, u_int len)
 	if (ret == SSH_ERR_NO_BUFFER_SPACE)
 		return 0;
 	fatal("%s: %s", __func__, ssh_err(ret));
+#if defined (__TANDEM)
+#pragma NOWARN(1252)
+#endif
 }
+#if defined (__TANDEM)
+#pragma WARN(1252)
+#endif
 
 int
 buffer_get_ret(Buffer *buffer, void *buf, u_int len)
@@ -87,7 +93,13 @@ buffer_consume_ret(Buffer *buffer, u_int bytes)
 	if (ret == SSH_ERR_MESSAGE_INCOMPLETE)
 		return -1;
 	fatal("%s: %s", __func__, ssh_err(ret));
+#if defined (__TANDEM)
+#pragma NOWARN(1252)
+#endif
 }
+#if defined (__TANDEM)
+#pragma WARN(1252)
+#endif
 
 void
 buffer_consume(Buffer *buffer, u_int bytes)
@@ -106,7 +118,13 @@ buffer_consume_end_ret(Buffer *buffer, u_int bytes)
 	if (ret == SSH_ERR_MESSAGE_INCOMPLETE)
 		return -1;
 	fatal("%s: %s", __func__, ssh_err(ret));
+#if defined (__TANDEM)
+#pragma NOWARN(1252)
+#endif
 }
+#if defined (__TANDEM)
+#pragma WARN(1252)
+#endif
 
 void
 buffer_consume_end(Buffer *buffer, u_int bytes)

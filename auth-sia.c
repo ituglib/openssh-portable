@@ -109,7 +109,7 @@ session_setup_sia(struct passwd *pw, char *tty)
 
 	sia_ses_release(&ent);
 
-	setuid(0);
+	setuid(SUPERUSER);
 	permanently_set_uid(pw);
 }
 

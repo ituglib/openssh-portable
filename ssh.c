@@ -256,7 +256,7 @@ resolve_host(const char *name, int port, int logerr, char *cname, size_t clen)
 	if ((gaierr = getaddrinfo(name, strport, &hints, &res)) != 0) {
 		if (logerr || (gaierr != EAI_NONAME && gaierr != EAI_NODATA))
 			loglevel = SYSLOG_LEVEL_ERROR;
-		do_log2(loglevel, "%s: Could not resolve hostname %.100s: %s",
+		do_log2((LogLevel)loglevel, "%s: Could not resolve hostname %.100s: %s",
 		    __progname, name, ssh_gai_strerror(gaierr));
 		return NULL;
 	}
@@ -1221,7 +1221,7 @@ main(int ac, char **av)
 	if (options.connection_attempts <= 0)
 		fatal("Invalid number of ConnectionAttempts");
 #ifndef HAVE_CYGWIN
-	if (original_effective_uid != 0)
+	if (original_effective_uid != SUPERUSER)
 		options.use_privileged_port = 0;
 #endif
 
@@ -1458,7 +1458,7 @@ main(int ac, char **av)
 	 * user's home directory if it happens to be on a NFS volume where
 	 * root is mapped to nobody.
 	 */
-	if (original_effective_uid == 0) {
+	if (original_effective_uid == SUPERUSER) {
 		PRIV_START;
 		permanently_set_uid(pw);
 	}

@@ -790,7 +790,13 @@ sdirent_comp(const void *aa, const void *bb)
 		return (rmul * NCMP(a->a.size, b->a.size));
 
 	fatal("Unknown ls sort type");
+#if defined (__TANDEM)
+#pragma NOWARN(1252)
+#endif
 }
+#if defined (__TANDEM)
+#pragma WARN(1252)
+#endif
 
 /* sftp ls.1 replacement for directories */
 static int
@@ -2382,7 +2388,7 @@ main(int argc, char **argv)
 		case 'v':
 			if (debug_level < 3) {
 				addargs(&args, "-v");
-				ll = SYSLOG_LEVEL_DEBUG1 + debug_level;
+				ll = (LogLevel)(SYSLOG_LEVEL_DEBUG1 + debug_level);
 			}
 			debug_level++;
 			break;

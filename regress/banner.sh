@@ -13,7 +13,8 @@ verbose "test $tid: missing banner file"
 	cmp $OBJ/empty.in $OBJ/banner.out ) || \
 	fail "missing banner file"
 
-for s in 0 10 100 1000 10000 100000 ; do
+#for s in 0 10 100 1000 10000 100000 ; do
+for s in 0 10 100 1000 10000 ; do
 	if [ "$s" = "0" ]; then
 		# create empty banner
 		touch $OBJ/banner.in
@@ -42,3 +43,5 @@ verbose "test $tid: suppress banner (-q)"
 	fail "suppress banner (-q)"
 
 rm -f $OBJ/banner.out $OBJ/banner.in $OBJ/empty.in
+
+

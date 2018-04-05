@@ -1586,7 +1586,7 @@ forward_equals(const struct Forward *a, const struct Forward *b)
 int
 bind_permitted(int port, uid_t uid)
 {
-	if (port < IPPORT_RESERVED && uid != 0)
+	if (port < IPPORT_RESERVED && uid != SUPERUSER)
 		return 0;
 	return 1;
 }
