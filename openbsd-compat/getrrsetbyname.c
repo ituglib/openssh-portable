@@ -123,6 +123,14 @@ _getshort(msgp)
 	GETSHORT(u, msgp);
 	return (u);
 }
+#elif HAVE__GETSHORT == 2
+/* Needed because NonStop declares but does not implement this function. */
+unsigned short _getshort(unsigned char *msgp) {
+	register u_int16_t u;
+
+	GETSHORT(u, msgp);
+	return (u);
+}
 #elif defined(HAVE_DECL__GETSHORT) && (HAVE_DECL__GETSHORT == 0)
 u_int16_t _getshort(register const u_char *);
 #endif
@@ -132,6 +140,14 @@ static u_int32_t
 _getlong(msgp)
 	register const u_char *msgp;
 {
+	register u_int32_t u;
+
+	GETLONG(u, msgp);
+	return (u);
+}
+#elif HAVE__GETLONG == 2
+/* Needed because NonStop declares but does not implement this function. */
+unsigned long  _getlong(unsigned char *msgp) {
 	register u_int32_t u;
 
 	GETLONG(u, msgp);
@@ -170,11 +186,20 @@ struct dns_response {
 	struct dns_rr		*additional;
 };
 
+#ifdef __TANDEM
+/* Bypass NonStop compiler defect */
+#define const
+#endif
+
 static struct dns_response *parse_dns_response(const u_char *, int);
 static struct dns_query *parse_dns_qsection(const u_char *, int,
     const u_char **, int);
 static struct dns_rr *parse_dns_rrsection(const u_char *, int, const u_char **,
     int);
+
+#ifdef __TANDEM
+#undef const
+#endif
 
 static void free_dns_query(struct dns_query *);
 static void free_dns_rr(struct dns_rr *);
@@ -376,6 +401,11 @@ freerrset(struct rrsetinfo *rrset)
 	free(rrset);
 }
 
+#ifdef __TANDEM
+/* Bypass NonStop compiler defect */
+#define const
+#endif
+
 /*
  * DNS response parsing routines
  */
@@ -553,6 +583,10 @@ parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
 
 	return (head);
 }
+
+#ifdef __TANDEM
+#undef const
+#endif
 
 static void
 free_dns_query(struct dns_query *p)
