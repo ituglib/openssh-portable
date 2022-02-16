@@ -1031,7 +1031,7 @@ mips-sony-bsd|mips-sony-newsos4)
 	TEST_MALLOC_OPTIONS="AFGJPRX"
 	;;
 *-tandem-*)
-	CPPFLAGS="$CPPFLAGS -Wextensions -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1 -Wnowarn=262,1252 -DNSIG=32"
+	CPPFLAGS="$CPPFLAGS -Wextensions -WIEEE_float -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1 -Wnowarn=262,1252 -DNSIG=32"
 	AC_DEFINE([HAVE_STRUCT_IN6_ADDR], [1], [struct in6_addr actually defined])
 	AC_DEFINE([HAVE_STRUCT_SOCKADDR_IN6], [1], [struct sockaddr_in6 actually defined])
 	AC_DEFINE([HAVE__GETSHORT], [1], [decl exists but impl is missing])
