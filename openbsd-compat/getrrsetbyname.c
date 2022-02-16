@@ -123,7 +123,7 @@ _getshort(msgp)
 	GETSHORT(u, msgp);
 	return (u);
 }
-#elif HAVE__GETSHORT == 2
+#elif NEED__GETSHORT_IMPL
 /* Needed because NonStop declares but does not implement this function. */
 unsigned short _getshort(unsigned char *msgp) {
 	register u_int16_t u;
@@ -145,7 +145,7 @@ _getlong(msgp)
 	GETLONG(u, msgp);
 	return (u);
 }
-#elif HAVE__GETLONG == 2
+#elif NEED__GETLONG_IMPL
 /* Needed because NonStop declares but does not implement this function. */
 unsigned long  _getlong(unsigned char *msgp) {
 	register u_int32_t u;
