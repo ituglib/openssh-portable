@@ -118,7 +118,6 @@ struct __res_state _res;
     !defined(HAVE_DECL__GETLONG) || HAVE_DECL__GETLONG == 0
 #define _getshort(x) (_ssh_compat_getshort(x))
 #define _getlong(x) (_ssh_compat_getlong(x))
-#endif
 
 /*
  * Routines to insert/extract short/long's.
@@ -142,6 +141,7 @@ _getlong(msgp)
 	GETLONG(u, msgp);
 	return (u);
 }
+#endif
 
 /* ************** */
 
